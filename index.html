@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e9e2d3">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%94%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@400;600&family=Noto+Serif+JP:wght@400;600&family=Noto+Serif+Bengali:wght@400;600&family=Noto+Naskh+Arabic:wght@400;600&display=swap" rel="stylesheet">
+<title>Doorsong — by Anwar Creative Studio</title>
+<style>
+  :root{
+    --paper: #e9e2d3;
+    --ink: #2a2420;
+    --ink-soft: #5a5044;
+    --accent-a: #7c2a1e;
+    --accent-b: #c79a3e;
+    --content-font: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 44px 20px calc(64px + env(safe-area-inset-bottom));
+    color: var(--ink);
+    font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    background: var(--paper);
+    transition: background-color 0.6s ease, color 0.6s ease;
+    position: relative;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* subtle paper grain, pure CSS, no image assets */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image:
+      radial-gradient(rgba(0,0,0,0.035) 0.6px, transparent 0.6px),
+      radial-gradient(rgba(0,0,0,0.025) 0.6px, transparent 0.6px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 2px 4px;
+    z-index: 0;
+  }
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.32), transparent 62%);
+    z-index: 0;
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  .brand {
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 4px;
+    transition: color 0.6s ease;
+  }
+  .brand .by {
+    color: var(--ink-soft);
+    letter-spacing: 0.08em;
+    text-transform: none;
+    font-size: 11px;
+  }
+
+  .eyebrow {
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+    transition: color 0.6s ease;
+  }
+
+  h1 {
+    font-size: clamp(26px, 4vw, 40px);
+    font-weight: 500;
+    margin: 0 0 8px;
+    text-align: center;
+    transition: color 0.6s ease;
+    font-family: var(--content-font);
+  }
+
+  .sub {
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    text-align: center;
+    max-width: 480px;
+    margin: 0 0 4px;
+    font-style: italic;
+    line-height: 1.55;
+    min-height: 44px;
+    transition: color 0.6s ease;
+  }
+
+  .voice-tag {
+    font-family: "Courier New", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-a);
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    padding: 4px 12px;
+    margin-bottom: 22px;
+    transition: color 0.6s ease;
+  }
+
+  /* ---------- switcher ---------- */
+  .switcher { display: flex; align-items: center; gap: 18px; margin: 4px 0 6px; }
+
+  .nav-arrow {
+    background: none;
+    border: 1px solid var(--ink-soft);
+    color: var(--ink);
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.6s ease;
+    flex-shrink: 0;
+  }
+  .nav-arrow:hover { background: var(--ink); color: var(--paper); }
+  .nav-arrow:focus-visible { outline: 2px solid var(--accent-a); outline-offset: 2px; }
+
+  .door-tabs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+  .door-tab {
+    font-family: inherit;
+    font-size: 12.5px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--ink-soft);
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+  .door-tab[aria-selected="true"] { color: var(--paper); background: var(--ink); border-color: var(--ink); }
+  .door-tab:not([aria-selected="true"]):hover { border-color: var(--ink-soft); color: var(--ink); }
+  .door-tab:focus-visible { outline: 2px solid var(--accent-a); outline-offset: 2px; }
+
+  /* ---------- stage ---------- */
+  .stage-wrap { width: min(880px, 100%); min-height: 640px; display: flex; justify-content: center; margin-top: 18px; position: relative; }
+
+  .enter-overlay {
+    position: absolute; inset: 0;
+    z-index: 20;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.04);
+    cursor: pointer;
+    transition: opacity 0.5s ease;
+  }
+  .enter-overlay.hidden { opacity: 0; pointer-events: none; }
+  .enter-card {
+    background: var(--paper);
+    border: 1px solid var(--ink-soft);
+    border-radius: 16px;
+    padding: 22px 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transition: background 0.6s ease, border-color 0.6s ease;
+  }
+  .enter-card .bell { font-size: 26px; margin-bottom: 6px; }
+  .enter-card .line1 { font-size: 15px; font-weight: 500; }
+  .enter-card .line2 { font-size: 12px; color: var(--ink-soft); margin-top: 4px; transition: color 0.6s ease; }
+
+  .stage {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+    transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .stage.transitioning { opacity: 0; transform: translateY(10px) scale(0.985); }
+
+  .roof {
+    width: 100%;
+    max-width: 640px;
+    filter: drop-shadow(0 16px 18px rgba(30,20,10,0.16));
+    position: relative;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .strands {
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2px;
+    position: relative;
+    margin-top: -4px;
+    padding-bottom: 10px;
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  .strand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform-origin: top center;
+    will-change: transform;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .strand span {
+    display: block;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink);
+    opacity: 0.86;
+    transition: color 0.6s ease;
+    font-family: var(--content-font);
+  }
+
+  .strand::before {
+    content: "";
+    display: block;
+    width: 1px; height: 6px;
+    background: var(--ink-soft);
+    opacity: 0.5;
+  }
+
+  .fade-bottom {
+    position: absolute;
+    left: 0; right: 0; bottom: -2px;
+    height: 90px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0), var(--paper) 90%);
+    pointer-events: none;
+    z-index: 2;
+    transition: background 0.6s ease;
+  }
+
+  .motes { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+  .motes span {
+    position: absolute;
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: var(--accent-b);
+    opacity: 0;
+    filter: blur(0.3px);
+    animation: mote-drift 14s ease-in-out infinite;
+  }
+  .motes span:nth-child(1) { left: 12%; animation-delay: 0s; animation-duration: 16s; }
+  .motes span:nth-child(2) { left: 26%; animation-delay: 2.2s; animation-duration: 13s; }
+  .motes span:nth-child(3) { left: 44%; animation-delay: 5.5s; animation-duration: 18s; }
+  .motes span:nth-child(4) { left: 61%; animation-delay: 1.2s; animation-duration: 15s; }
+  .motes span:nth-child(5) { left: 78%; animation-delay: 4s; animation-duration: 17s; }
+  .motes span:nth-child(6) { left: 90%; animation-delay: 7s; animation-duration: 14s; }
+
+  @keyframes mote-drift {
+    0%   { transform: translateY(110%) translateX(0); opacity: 0; }
+    10%  { opacity: 0.35; }
+    50%  { transform: translateY(30%) translateX(8px); opacity: 0.5; }
+    90%  { opacity: 0.15; }
+    100% { transform: translateY(-10%) translateX(-6px); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { .motes { display: none; } }
+
+  .controls { margin-top: 12px; display: flex; gap: 14px; align-items: center; }
+
+  button.sound-toggle {
+    font-family: inherit;
+    font-size: 13px;
+    background: transparent;
+    border: 1px solid var(--ink-soft);
+    color: var(--ink);
+    padding: 9px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.6s ease;
+  }
+  button.sound-toggle:hover { background: var(--ink); color: var(--paper); }
+  button.sound-toggle:focus-visible { outline: 2px solid var(--accent-a); outline-offset: 2px; }
+
+  .hint { font-size: 12px; color: var(--ink-soft); transition: color 0.6s ease; }
+
+  .footer-credit {
+    margin-top: 34px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    opacity: 0.7;
+    transition: color 0.6s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) { .strand, .stage { transition: none !important; } }
+
+  @media (max-width: 560px) {
+    body { padding: 26px 14px calc(44px + env(safe-area-inset-bottom)); }
+    .switcher { flex-wrap: wrap; justify-content: center; gap: 12px; }
+    .nav-arrow { width: 44px; height: 44px; font-size: 18px; }
+    .door-tab { padding: 10px 14px; font-size: 12px; }
+    .stage-wrap { min-height: 0; margin-top: 10px; }
+    .sub { font-size: 13.5px; margin-bottom: 2px; }
+    .strand span { font-size: 12.5px; }
+    .controls { flex-direction: column; gap: 8px; text-align: center; }
+    button.sound-toggle { padding: 11px 20px; }
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .strands { cursor: default; }
+  }
+</style>
+</head>
+<body tabindex="0" autofocus>
+
+  <div class="brand">DOORSONG <span class="by">— by Anwar Creative Studio</span></div>
+  <div class="eyebrow" id="eyebrow">中国 · China</div>
+  <h1 id="title" aria-live="polite">One time, one meeting</h1>
+  <p class="sub" id="subtitle" aria-live="polite">Sweep your cursor through the doorway. Each strand answers with its own note.</p>
+  <div class="voice-tag" id="voiceTag">Voice — Bronze Temple Bell</div>
+
+  <div class="switcher">
+    <button class="nav-arrow" id="prevBtn" aria-label="Previous door">‹</button>
+    <div class="door-tabs" id="doorTabs" role="tablist"></div>
+    <button class="nav-arrow" id="nextBtn" aria-label="Next door">›</button>
+  </div>
+
+  <div class="stage-wrap">
+    <div class="enter-overlay" id="enterOverlay">
+      <div class="enter-card">
+        <div class="bell">🔔</div>
+        <div class="line1" id="enterLine1">Click to begin</div>
+        <div class="line2" id="enterLine2">this unlocks sound — after that, just hover</div>
+      </div>
+    </div>
+    <div class="stage" id="stage">
+      <div class="motes" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <svg class="roof" id="roof" viewBox="0 0 640 170" preserveAspectRatio="xMidYMax meet" aria-hidden="true"></svg>
+      <div class="strands" id="strands" role="img" aria-label="Interactive hanging wind chime strands — touch or hover to play"></div>
+      <div class="fade-bottom"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="sound-toggle" id="soundToggle" aria-pressed="true">🔔 Sound: on</button>
+    <span class="hint" id="hintText">click once to enable audio · ← → to change doors</span>
+  </div>
+
+  <div class="footer-credit">Doorsong — a project by Anwar Creative Studio</div>
+
+<script>
+(function() {
+
+  // Some browsers (notably Safari) withhold mousemove events in an iframe
+  // until it's been focused. Grab focus proactively so hovering just works.
+  function grabFocus() { try { window.focus(); document.body.focus({ preventScroll: true }); } catch (e) {} }
+  grabFocus();
+  window.addEventListener('load', grabFocus);
+  document.addEventListener('mouseenter', grabFocus);
+  document.addEventListener('mouseover', grabFocus);
+  document.addEventListener('pointerenter', grabFocus);
+  document.addEventListener('pointermove', grabFocus, { once: true });
+  let focusAttempts = 0;
+  const focusTimer = setInterval(() => {
+    grabFocus();
+    focusAttempts++;
+    if (focusAttempts > 10) clearInterval(focusTimer);
+  }, 300);
+
+  // Scene definitions — one per door
+  const SCENES = [
+    {
+      id: 'china', label: '中国 · China',
+      font: '"Noto Serif SC", "Iowan Old Style", serif',
+      title: 'One time, one meeting',
+      subtitle: 'A temple bell, cast in bronze — the sound the wind leaves behind at a red doorway.',
+      voiceName: 'Bronze temple bell',
+      paper: '#e9e2d3', ink: '#2a2420', inkSoft: '#5a5044',
+      accentA: '#7c2a1e', accentB: '#c79a3e',
+      chars: "风铃声门归客途遥梦月云山水光雨春远静心念影路笛琴竹雾".split(""),
+      scale: [523.25, 587.33, 659.25, 783.99, 880.00, 987.77, 1046.50, 1174.70],
+      voice: 'bell',
+      roof: roofChina
+    },
+    {
+      id: 'japan', label: '日本 · Japan',
+      font: '"Noto Serif JP", "Noto Serif SC", "Iowan Old Style", serif',
+      title: '風鈴 — Furin',
+      subtitle: 'A glass bell beneath a shrine gate, ringing thin and bright with every passing breeze.',
+      voiceName: 'Glass furin',
+      paper: '#eee8df', ink: '#231f1c', inkSoft: '#5c554c',
+      accentA: '#b23b2e', accentB: '#211d1a',
+      chars: "風鈴音扉旅夢月雲山水光雨春遠静心思影道笛琴竹霧おとかぜゆめそら".split(""),
+      scale: [587.33, 659.25, 783.99, 880.00, 987.77, 1174.70, 1318.51, 1567.98],
+      voice: 'glass',
+      roof: roofJapan
+    },
+    {
+      id: 'bengal', label: 'বাংলা · Bengal',
+      font: '"Noto Serif Bengali", "Iowan Old Style", serif',
+      title: 'বাতাসের সুর — Tune of the Wind',
+      subtitle: 'An ektara\u2019s single string, plucked low beneath a terracotta arch.',
+      voiceName: 'Ektara pluck',
+      paper: '#f0e2ce', ink: '#3a2415', inkSoft: '#6b5138',
+      accentA: '#a1512e', accentB: '#d9a441',
+      chars: "অআইউএওকখগঘচছজঝটঠডঢণতথদধনপফবভমযরলশষসহ".split(""),
+      scale: [174.61, 196.00, 220.00, 261.63, 293.66, 349.23, 392.00],
+      voice: 'ektara',
+      roof: roofBengal
+    },
+    {
+      id: 'vietnam', label: 'Việt Nam',
+      font: '"Noto Serif", "Iowan Old Style", Georgia, serif',
+      title: 'Gió qua mái nhà — Wind Through the Roof',
+      subtitle: 'Bamboo chimes under a curling communal-house eave, warm and hollow as they knock.',
+      voiceName: 'Bamboo knock',
+      paper: '#e7e6d9', ink: '#232420', inkSoft: '#565b52',
+      accentA: '#3f6b56', accentB: '#c9a227',
+      chars: "gióchuôngcửaxamộngsươngmưathuđêmxưa".split(""),
+      scale: [246.94, 277.18, 311.13, 370.00, 415.30, 493.88, 554.37],
+      voice: 'bamboo',
+      roof: roofVietnam
+    },
+    {
+      id: 'morocco', label: 'المغرب · Morocco',
+      font: '"Noto Naskh Arabic", "Iowan Old Style", serif',
+      title: 'ريح الأبواب — Wind of the Doors',
+      subtitle: 'An oud\u2019s doubled strings, humming beneath a horseshoe arch of cut plaster.',
+      voiceName: 'Oud pluck',
+      paper: '#ece1cb', ink: '#22303a', inkSoft: '#556069',
+      accentA: '#1f5f6b', accentB: '#c9a227',
+      chars: "ابتثجحخدذرزسشصضطظعغفقكلمنهوي".split(""),
+      scale: [220.00, 261.63, 293.66, 329.63, 392.00, 440.00, 493.88],
+      voice: 'oud',
+      roof: roofMorocco
+    },
+    {
+      id: 'mexico', label: 'México',
+      font: '"Noto Serif", "Iowan Old Style", Georgia, serif',
+      title: 'El aire entre los papeles — Air Between the Paper',
+      subtitle: 'Cut-paper banners over a marimba\u2019s bright mallet, ringing like a fiesta afternoon.',
+      voiceName: 'Marimba mallet',
+      paper: '#f5ead9', ink: '#33232a', inkSoft: '#6b5560',
+      accentA: '#d1355b', accentB: '#2f9c95',
+      chars: "vientopapelflorfiestasollunacallecantocielobaile".split(""),
+      scale: [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77],
+      voice: 'marimba',
+      roof: roofMexico
+    }
+  ];
+
+  // Roof SVG templates — each takes the scene object and returns markup
+  function roofChina(scene) {
+    const a = scene.accentA, b = scene.accentB;
+    return `
+      <path d="M60,60 C160,10 480,10 580,60 L580,74 C480,40 160,40 60,74 Z" fill="${b}"/>
+      <path d="M60,60 C40,66 22,80 14,102" stroke="${b}" stroke-width="10" fill="none" stroke-linecap="round"/>
+      <path d="M580,60 C600,66 618,80 626,102" stroke="${b}" stroke-width="10" fill="none" stroke-linecap="round"/>
+      <rect x="50" y="74" width="540" height="14" rx="4" fill="${a}"/>
+      <circle cx="320" cy="14" r="6" fill="${b}"/>
+      <rect x="317" y="4" width="6" height="14" fill="${b}"/>
+    `;
+  }
+
+  function roofJapan(scene) {
+    const a = scene.accentA, b = scene.accentB;
+    return `
+      <path d="M70,44 C240,26 400,26 570,44 L570,54 C400,38 240,38 70,54 Z" fill="${a}"/>
+      <path d="M56,54 C44,58 34,66 30,78" stroke="${a}" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <path d="M584,54 C596,58 606,66 610,78" stroke="${a}" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <rect x="40" y="80" width="560" height="10" rx="3" fill="${b}"/>
+      <rect x="150" y="90" width="12" height="20" fill="${b}"/>
+      <rect x="478" y="90" width="12" height="20" fill="${b}"/>
+      <circle cx="320" cy="18" r="4.5" fill="${b}"/>
+    `;
+  }
+
+  function roofBengal(scene) {
+    const a = scene.accentA, b = scene.accentB;
+    let arcs = '';
+    const cusps = 5, startX = 90, endX = 550, baseY = 90, peak = 26;
+    for (let i = 0; i < cusps; i++) {
+      const x1 = startX + (i * (endX - startX)) / cusps;
+      const x2 = startX + ((i + 1) * (endX - startX)) / cusps;
+      const midX = (x1 + x2) / 2;
+      arcs += `<path d="M${x1},${baseY} Q${midX},${peak + (i === 2 ? -14 : 6)} ${x2},${baseY}" fill="none" stroke="${a}" stroke-width="7" stroke-linecap="round"/>`;
+    }
+    return `
+      ${arcs}
+      <rect x="70" y="88" width="500" height="12" rx="3" fill="${b}"/>
+      <circle cx="320" cy="10" r="5" fill="${b}"/>
+      <path d="M312,16 L328,16 L320,30 Z" fill="${b}"/>
+      <circle cx="150" cy="70" r="3" fill="${b}" opacity="0.7"/>
+      <circle cx="490" cy="70" r="3" fill="${b}" opacity="0.7"/>
+      <circle cx="320" cy="60" r="3" fill="${b}" opacity="0.7"/>
+    `;
+  }
+
+  function roofVietnam(scene) {
+    const a = scene.accentA, b = scene.accentB;
+    return `
+      <path d="M40,84 C120,20 240,4 320,4 C400,4 520,20 600,84" fill="none" stroke="${a}" stroke-width="9" stroke-linecap="round"/>
+      <path d="M40,84 C60,58 70,40 55,18" stroke="${b}" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M600,84 C580,58 570,40 585,18" stroke="${b}" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <rect x="55" y="86" width="530" height="12" rx="3" fill="${a}"/>
+      <circle cx="320" cy="4" r="5" fill="${b}"/>
+    `;
+  }
+
+  function roofMorocco(scene) {
+    const a = scene.accentA, b = scene.accentB;
+    let merlons = '';
+    const n = 7, startX = 120, endX = 520;
+    for (let i = 0; i <= n; i++) {
+      const x = startX + (i * (endX - startX)) / n;
+      merlons += `<rect x="${x - 5}" y="10" width="10" height="10" fill="${b}" opacity="0.85"/>`;
+    }
+    return `
+      <path d="M90,92 C90,36 150,6 320,6 C490,6 550,36 550,92" fill="none" stroke="${a}" stroke-width="9" stroke-linecap="round"/>
+      <path d="M112,92 C112,52 165,24 320,24 C475,24 528,52 528,92" fill="none" stroke="${b}" stroke-width="3.5"/>
+      ${merlons}
+      <rect x="80" y="90" width="480" height="10" rx="3" fill="${a}"/>
+      <path d="M310,4 L330,4 L320,20 Z" fill="${b}"/>
+      <circle cx="320" cy="2" r="3.5" fill="${b}"/>
+    `;
+  }
+
+  function roofMexico(scene) {
+    const palette = ['#d1355b', '#2f9c95', '#e8a33d', '#7a4fa3', '#e0563f'];
+    const n = 11, startX = 70, endX = 570, topY = 14, dropY = 78;
+    let flags = '';
+    let wire = `<path d="M${startX - 20},${topY} Q320,${topY - 10} ${endX + 20},${topY}" stroke="#8a7c68" stroke-width="2.5" fill="none"/>`;
+    for (let i = 0; i < n; i++) {
+      const cx = startX + (i * (endX - startX)) / (n - 1);
+      const color = palette[i % palette.length];
+      const w = 36, h = dropY - topY - (Math.abs(i - (n-1)/2) * 2);
+      const x0 = cx - w/2, x1 = cx + w/2;
+      const yTop = topY + 4;
+      const yBot = yTop + h;
+      // scalloped bottom edge
+      const scallop = `M${x0},${yTop} L${x1},${yTop} L${x1},${yBot - 10}
+        Q${cx + w*0.25},${yBot} ${cx},${yBot - 8}
+        Q${cx - w*0.25},${yBot} ${x0},${yBot - 10} Z`;
+      flags += `<path d="${scallop}" fill="${color}" opacity="0.92"/>`;
+      flags += `<circle cx="${cx}" cy="${yTop + h*0.4}" r="3" fill="${scene.paper}" opacity="0.8"/>`;
+    }
+    return wire + flags;
+  }
+
+  const root = document.documentElement;
+  const eyebrowEl = document.getElementById('eyebrow');
+  const titleEl = document.getElementById('title');
+  const subtitleEl = document.getElementById('subtitle');
+  const voiceTagEl = document.getElementById('voiceTag');
+  const roofEl = document.getElementById('roof');
+  const strandsContainer = document.getElementById('strands');
+  const stageEl = document.getElementById('stage');
+  const tabsEl = document.getElementById('doorTabs');
+  const soundToggle = document.getElementById('soundToggle');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let sceneIndex = 0;
+  let strands = [];
+  let soundOn = true;
+  let audioCtx = null;
+  let noiseBuffer = null;
+  let masterBus = null;
+
+  SCENES.forEach((scene, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'door-tab';
+    btn.textContent = scene.label;
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('aria-selected', i === sceneIndex ? 'true' : 'false');
+    btn.addEventListener('click', () => goTo(i));
+    tabsEl.appendChild(btn);
+  });
+
+  prevBtn.addEventListener('click', () => goTo((sceneIndex - 1 + SCENES.length) % SCENES.length));
+  nextBtn.addEventListener('click', () => goTo((sceneIndex + 1) % SCENES.length));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') goTo((sceneIndex - 1 + SCENES.length) % SCENES.length);
+    if (e.key === 'ArrowRight') goTo((sceneIndex + 1) % SCENES.length);
+  });
+
+  function goTo(i) {
+    if (i === sceneIndex) return;
+    stageEl.classList.add('transitioning');
+    setTimeout(() => {
+      sceneIndex = i;
+      renderScene(SCENES[sceneIndex]);
+      stageEl.classList.remove('transitioning');
+    }, 240);
+  }
+
+  function renderScene(scene) {
+    root.style.setProperty('--paper', scene.paper);
+    root.style.setProperty('--ink', scene.ink);
+    root.style.setProperty('--ink-soft', scene.inkSoft);
+    root.style.setProperty('--accent-a', scene.accentA);
+    root.style.setProperty('--accent-b', scene.accentB);
+    root.style.setProperty('--content-font', scene.font);
+
+    eyebrowEl.textContent = scene.label;
+    titleEl.textContent = scene.title;
+    subtitleEl.textContent = scene.subtitle;
+    voiceTagEl.textContent = `Voice — ${scene.voiceName}`;
+
+    roofEl.innerHTML = scene.roof(scene);
+
+    Array.from(tabsEl.children).forEach((btn, i) => {
+      btn.setAttribute('aria-selected', SCENES[i].id === scene.id ? 'true' : 'false');
+    });
+
+    buildStrands(scene);
+  }
+
+  function buildStrands(scene) {
+    strandsContainer.innerHTML = '';
+    strands = [];
+    const numStrands = window.innerWidth < 560 ? 15 : 24;
+    const minLen = 10, maxLen = 22;
+
+    for (let i = 0; i < numStrands; i++) {
+      const el = document.createElement('div');
+      el.className = 'strand';
+      const len = minLen + Math.floor(Math.random() * (maxLen - minLen));
+      for (let j = 0; j < len; j++) {
+        const span = document.createElement('span');
+        span.textContent = scene.chars[Math.floor(Math.random() * scene.chars.length)];
+        span.style.opacity = (0.95 - (j / len) * 0.55).toFixed(2);
+        el.appendChild(span);
+      }
+      strandsContainer.appendChild(el);
+      strands.push({ el, angle: 0, vel: 0, lastPlay: 0, phase: Math.random() * Math.PI * 2, x: 0 });
+    }
+    requestAnimationFrame(layoutStrands);
+  }
+
+  function layoutStrands() {
+    const rect = strandsContainer.getBoundingClientRect();
+    strands.forEach(s => {
+      const r = s.el.getBoundingClientRect();
+      s.x = r.left - rect.left + r.width / 2;
+    });
+  }
+  let resizeTimer;
+  function scheduleRebuild() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => buildStrands(SCENES[sceneIndex]), 150);
+  }
+  window.addEventListener('resize', scheduleRebuild);
+  window.addEventListener('orientationchange', scheduleRebuild);
+
+  // Audio — six instrument voices
+  function ensureAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const len = Math.floor(audioCtx.sampleRate * 0.4);
+      noiseBuffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
+
+      const compressor = audioCtx.createDynamicsCompressor();
+      compressor.threshold.value = -18;
+      compressor.knee.value = 20;
+      compressor.ratio.value = 6;
+      compressor.attack.value = 0.003;
+      compressor.release.value = 0.15;
+      compressor.connect(audioCtx.destination);
+      masterBus = compressor;
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  // bronze temple bell — fundamental + detuned partial + a quiet inharmonic "hum"
+  function voiceBell(freq, strength) {
+    const now = audioCtx.currentTime;
+    const gain = audioCtx.createGain();
+    const vol = Math.min(0.22, 0.08 + strength * 0.18);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(vol, now + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.7 + strength * 0.4);
+
+    const o1 = audioCtx.createOscillator(); o1.type = 'sine'; o1.frequency.value = freq;
+    const o2 = audioCtx.createOscillator(); o2.type = 'sine'; o2.frequency.value = freq * 2.01;
+    const g2 = audioCtx.createGain(); g2.gain.value = 0.28;
+    const o3 = audioCtx.createOscillator(); o3.type = 'sine'; o3.frequency.value = freq * 2.76;
+    const g3 = audioCtx.createGain(); g3.gain.value = 0.10;
+
+    o1.connect(gain); o2.connect(g2); g2.connect(gain); o3.connect(g3); g3.connect(gain);
+    gain.connect(masterBus);
+    o1.start(now); o2.start(now); o3.start(now);
+    o1.stop(now + 2.3); o2.stop(now + 2.3); o3.stop(now + 2.3);
+  }
+
+  // glass furin — higher overtone ratio, fast shimmer decay, slight vibrato
+  function voiceGlass(freq, strength) {
+    const now = audioCtx.currentTime;
+    const gain = audioCtx.createGain();
+    const vol = Math.min(0.2, 0.07 + strength * 0.16);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(vol, now + 0.004);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9 + strength * 0.25);
+
+    const o1 = audioCtx.createOscillator(); o1.type = 'sine'; o1.frequency.value = freq;
+    const o2 = audioCtx.createOscillator(); o2.type = 'sine'; o2.frequency.value = freq * 3.01;
+    const g2 = audioCtx.createGain(); g2.gain.value = 0.16;
+    const lfo = audioCtx.createOscillator(); lfo.frequency.value = 6;
+    const lfoGain = audioCtx.createGain(); lfoGain.gain.value = 3;
+    lfo.connect(lfoGain); lfoGain.connect(o1.frequency);
+
+    o1.connect(gain); o2.connect(g2); g2.connect(gain); gain.connect(masterBus);
+    o1.start(now); o2.start(now); lfo.start(now);
+    o1.stop(now + 1.3); o2.stop(now + 1.3); lfo.stop(now + 1.3);
+  }
+
+  // ektara — a short filtered-noise pluck transient plus a single triangle
+  // string with a quick pitch "settle" and a short natural decay
+  function voiceEktara(freq, strength) {
+    const now = audioCtx.currentTime;
+    const vol = Math.min(0.24, 0.1 + strength * 0.16);
+
+    const src = audioCtx.createBufferSource();
+    src.buffer = noiseBuffer;
+    const bp = audioCtx.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = freq * 1.5; bp.Q.value = 5;
+    const ng = audioCtx.createGain();
+    ng.gain.setValueAtTime(vol * 0.7, now);
+    ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+    src.connect(bp); bp.connect(ng); ng.connect(masterBus);
+    src.start(now); src.stop(now + 0.08);
+
+    const o = audioCtx.createOscillator();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(freq * 1.015, now);
+    o.frequency.exponentialRampToValueAtTime(freq, now + 0.05);
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(vol, now + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.5 + strength * 0.12);
+    o.connect(g); g.connect(masterBus);
+    o.start(now); o.stop(now + 0.85);
+  }
+
+  // oud — two close, slightly detuned strings for its doubled courses,
+  // with a warmer, lower-cutoff pluck than the ektara
+  function voiceOud(freq, strength) {
+    const now = audioCtx.currentTime;
+    const vol = Math.min(0.26, 0.11 + strength * 0.18);
+
+    const src = audioCtx.createBufferSource();
+    src.buffer = noiseBuffer;
+    const bp = audioCtx.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = freq * 1.1; bp.Q.value = 4;
+    const ng = audioCtx.createGain();
+    ng.gain.setValueAtTime(vol * 0.6, now);
+    ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+    src.connect(bp); bp.connect(ng); ng.connect(masterBus);
+    src.start(now); src.stop(now + 0.1);
+
+    [1, 1.004].forEach((mult, i) => {
+      const o = audioCtx.createOscillator();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(freq * mult * 1.01, now);
+      o.frequency.exponentialRampToValueAtTime(freq * mult, now + 0.06);
+      const g = audioCtx.createGain();
+      const v = i === 0 ? vol : vol * 0.55;
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(v, now + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + 0.65 + strength * 0.15);
+      o.connect(g); g.connect(masterBus);
+      o.start(now); o.stop(now + 1.0);
+    });
+  }
+
+  // hollow bamboo knock — sub sine "thock" + short filtered noise transient
+  function voiceBamboo(freq, strength) {
+    const now = audioCtx.currentTime;
+    const gain = audioCtx.createGain();
+    const vol = Math.min(0.26, 0.1 + strength * 0.2);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(vol, now + 0.006);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5 + strength * 0.25);
+
+    const o = audioCtx.createOscillator(); o.type = 'sine'; o.frequency.value = freq * 0.75;
+    o.connect(gain);
+
+    const src = audioCtx.createBufferSource();
+    src.buffer = noiseBuffer;
+    const bp = audioCtx.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = freq * 1.4; bp.Q.value = 3;
+    const ng = audioCtx.createGain();
+    ng.gain.setValueAtTime(vol * 0.5, now);
+    ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+    src.connect(bp); bp.connect(ng); ng.connect(masterBus);
+
+    gain.connect(masterBus);
+    o.start(now); o.stop(now + 0.7);
+    src.start(now); src.stop(now + 0.2);
+  }
+
+  // marimba mallet — fundamental + strong ~4th partial (characteristic of
+  // marimba's tuned resonator tubes) with a quick woody attack
+  function voiceMarimba(freq, strength) {
+    const now = audioCtx.currentTime;
+    const gain = audioCtx.createGain();
+    const vol = Math.min(0.28, 0.12 + strength * 0.2);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(vol, now + 0.004);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.65 + strength * 0.2);
+
+    const o1 = audioCtx.createOscillator(); o1.type = 'sine'; o1.frequency.value = freq;
+    const o2 = audioCtx.createOscillator(); o2.type = 'sine'; o2.frequency.value = freq * 3.98;
+    const g2 = audioCtx.createGain(); g2.gain.value = 0.22;
+
+    o1.connect(gain); o2.connect(g2); g2.connect(gain); gain.connect(masterBus);
+    o1.start(now); o2.start(now);
+    o1.stop(now + 1.0); o2.stop(now + 1.0);
+  }
+
+  const VOICES = {
+    bell: voiceBell, glass: voiceGlass, ektara: voiceEktara,
+    bamboo: voiceBamboo, oud: voiceOud, marimba: voiceMarimba
+  };
+
+  function playChime(scene, freq, strength) {
+    if (!soundOn || !audioCtx) return;
+    VOICES[scene.voice](freq, strength);
+  }
+
+  soundToggle.addEventListener('click', () => {
+    soundOn = !soundOn;
+    ensureAudio();
+    soundToggle.textContent = soundOn ? '🔔 Sound: on' : '🔕 Sound: off';
+    soundToggle.setAttribute('aria-pressed', String(soundOn));
+  });
+  document.body.addEventListener('click', ensureAudio, { once: true });
+
+  const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches || ('ontouchstart' in window);
+  const enterLine1 = document.getElementById('enterLine1');
+  const enterLine2 = document.getElementById('enterLine2');
+  const hintText = document.getElementById('hintText');
+  if (isTouch) {
+    enterLine1.textContent = 'Tap to begin';
+    enterLine2.textContent = 'this unlocks sound — then just touch and drag';
+    hintText.textContent = 'tap once to enable audio · use ‹ › to change doors';
+  }
+
+  const enterOverlay = document.getElementById('enterOverlay');
+  let overlayDismissed = false;
+  function dismissOverlay() {
+    if (overlayDismissed) return;
+    overlayDismissed = true;
+    ensureAudio();
+    enterOverlay.classList.add('hidden');
+  }
+  enterOverlay.addEventListener('click', dismissOverlay);
+  enterOverlay.addEventListener('touchend', (e) => { e.preventDefault(); dismissOverlay(); }, { passive: false });
+
+  // Physics and pointer interaction
+  const STIFFNESS = 90;
+  const DAMPING = 4.2;
+  const HIT_RADIUS = isTouch ? 60 : 46;
+  const THROTTLE_MS = 90;
+  let lastMouseX = -9999;
+
+  function pointerToLocal(clientX, clientY) {
+    const rect = strandsContainer.getBoundingClientRect();
+    return { x: clientX - rect.left, y: clientY - rect.top, rect };
+  }
+
+  function handleMove(clientX, clientY) {
+    ensureAudio();
+    const { x, y, rect } = pointerToLocal(clientX, clientY);
+    const dirX = x - (lastMouseX === -9999 ? x : lastMouseX);
+    lastMouseX = x;
+    if (y < -40 || y > rect.height + 60) return;
+
+    const now = performance.now();
+    const scene = SCENES[sceneIndex];
+    strands.forEach(s => {
+      const dx = s.x - x;
+      const dist = Math.abs(dx);
+      if (dist < HIT_RADIUS) {
+        const closeness = 1 - dist / HIT_RADIUS;
+        const push = closeness * closeness * 8.5 * (dirX >= 0 ? 1 : -1) * -1;
+        s.vel += push;
+
+        if (now - s.lastPlay > THROTTLE_MS && closeness > 0.25) {
+          s.lastPlay = now;
+          const idx = Math.abs(Math.round((s.x / (rect.width || 1)) * (scene.scale.length - 1)));
+          playChime(scene, scene.scale[idx % scene.scale.length], closeness);
+        }
+      }
+    });
+  }
+
+  strandsContainer.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+  strandsContainer.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') handleMove(e.clientX, e.clientY); });
+  strandsContainer.addEventListener('mouseleave', () => { lastMouseX = -9999; });
+  strandsContainer.addEventListener('touchstart', (e) => {
+    ensureAudio();
+    const t = e.touches[0]; if (t) handleMove(t.clientX, t.clientY);
+  }, { passive: true });
+  strandsContainer.addEventListener('touchmove', (e) => {
+    const t = e.touches[0]; if (t) handleMove(t.clientX, t.clientY);
+  }, { passive: true });
+
+  // Animation loop
+  let last = performance.now();
+  function tick(now) {
+    const dt = Math.min(0.032, (now - last) / 1000);
+    last = now;
+    strands.forEach(s => {
+      const idle = prefersReduced ? 0 : Math.sin(now / 1400 + s.phase) * 0.4;
+      const accel = (-STIFFNESS * s.angle - DAMPING * s.vel);
+      s.vel += accel * dt;
+      s.angle += s.vel * dt;
+      s.el.style.transform = `rotate(${(s.angle + idle).toFixed(2)}deg)`;
+    });
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  renderScene(SCENES[sceneIndex]);
+})();
+</script>
+</body>
+</html>
