@@ -1,10 +1,10 @@
 # Doorsong 🔔
 
-Six doorways from around the world, each strung with hanging strands that ring when you touch them.
+An interactive doorway into six cultures. Hover or touch the hanging strands and each one rings with its own instrument.
 
-Every door has its own architecture, its own script, and its own sound, all generated live in the browser with the Web Audio API. No samples, no recordings.
+Six doors, each modeled after a different culture's architecture, script, and sound. Every instrument is synthesized live in the browser with the Web Audio API: no samples, no recordings, just oscillators and filters tuned by ear.
 
-[Live demo](https://tamkin-anwar.github.io/doorsong/)
+**[Live demo →](https://tamkin-anwar.github.io/doorsong/)**
 
 ## The six doors
 
@@ -19,16 +19,17 @@ Every door has its own architecture, its own script, and its own sound, all gene
 
 ## How it works
 
-Each strand acts like a small damped spring. Move your cursor or finger near one and it gets a push, then swings back on its own.
+Each strand is a damped spring. Your cursor or finger passes near it, gives it a little push, and it swings and settles back on its own.
 
-The sound works the same way. Each door has its own musical scale and its own instrument, built from oscillators, filtered noise, and envelopes, so the bell doesn't sound like a slowed down oud.
+The sound comes from the same physics: no audio files anywhere. Each door has its own scale and its own instrument built out of oscillators, filtered noise, and envelopes, so a bell doesn't just sound like a pitched-down oud.
 
-Everything is in one `index.html` file. No build step, no dependencies, no framework.
+It's a single `index.html` file. No build step, no dependencies, no framework. Open it and it works.
 
 ## Running locally
 
-Open `index.html` in a browser.
+Open `index.html` in a browser. That's it.
 
 ## Credits
 
-Concept inspired by [Marina Budarina](https://budarina.studio)'s "doors of the world" idea. Built by Anwar Creative Studio.
+Concept inspired by [Marina Budarina](https://budarina.studio)'s "doors of the world" idea.
+Built by **Anwar Creative Studio**.
