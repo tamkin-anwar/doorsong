@@ -1218,18 +1218,25 @@
   function handleMove(clientX, clientY) {
     ensureAudio();
     const { x, y, rect } = pointerToLocal(clientX, clientY);
-    const dirX = x - (lastMouseX === -9999 ? x : lastMouseX);
+    const prevX = lastMouseX === -9999 ? x : lastMouseX;
+    const dirX = x - prevX;
     lastMouseX = x;
     if (y < -40 || y > rect.height + 60) return;
 
     const now = performance.now();
     const scene = SCENES[sceneIndex];
+    // Some trackpads/mice report far fewer, larger jumps between samples
+    // than others. Scale the push by how far the cursor actually moved,
+    // and test against the whole swept segment (not just the current
+    // point), so a sparse sampling rate doesn't skip strands or under-hit
+    // them the way a single fixed-size push would.
+    const moveMag = Math.min(3, Math.max(0.5, Math.abs(dirX) / 8));
+    const segMin = Math.min(prevX, x), segMax = Math.max(prevX, x);
     strands.forEach(s => {
-      const dx = s.x - x;
-      const dist = Math.abs(dx);
+      const dist = s.x < segMin ? segMin - s.x : (s.x > segMax ? s.x - segMax : 0);
       if (dist < HIT_RADIUS) {
         const closeness = 1 - dist / HIT_RADIUS;
-        const push = closeness * closeness * 11.5 * (dirX >= 0 ? 1 : -1) * -1;
+        const push = closeness * closeness * 11.5 * moveMag * (dirX >= 0 ? 1 : -1) * -1;
         s.vel += push;
 
         if (now - s.lastPlay > THROTTLE_MS && closeness > 0.25) {
