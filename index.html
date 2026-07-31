@@ -1000,7 +1000,14 @@
       masterGain.gain.value = isTouch ? 1.3 : 1.0;
       compressor.connect(masterGain);
       masterGain.connect(audioCtx.destination);
-      masterBus = compressor;
+      // A voice-count-aware bus: every triggered note always plays (nothing
+      // is ever silently dropped), but this bus's gain ducks down smoothly
+      // as more notes pile up, so heavy polyphony on the long-ringing
+      // voices tempers overall loudness instead of overloading the
+      // compressor. See updateVoiceBusGain().
+      masterBus = audioCtx.createGain();
+      masterBus.gain.value = 1;
+      masterBus.connect(compressor);
     }
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
@@ -1155,19 +1162,36 @@
     bell: voiceBell, glass: voiceGlass, ektara: voiceEktara,
     bamboo: voiceBamboo, oud: voiceOud, marimba: voiceMarimba
   };
-  // Matches each voice's own oscillator .stop() time above, so the cap
-  // frees up right as a note actually finishes ringing.
+  // Matches each voice's own oscillator .stop() time above, so the bus
+  // gain recovers right as a note actually finishes ringing.
   const VOICE_DURATION_MS = {
     bell: 2300, glass: 1300, ektara: 850, oud: 1000, bamboo: 700, marimba: 1000
   };
   let activeVoiceCount = 0;
-  const MAX_ACTIVE_VOICES = 40;
+
+  // Sweeping the whole strand field is meant to trigger a full run across
+  // every strand, and repeating that a few times on a long-ringing voice
+  // (bell, glass) can easily leave dozens of notes genuinely overlapping.
+  // That's normal, intended use, not abuse, so nothing here ever refuses to
+  // play a note. Instead the shared bus gain ducks smoothly as polyphony
+  // rises, keeping total loudness in a safe range for the compressor
+  // without ever silencing a gesture.
+  function updateVoiceBusGain() {
+    const target = Math.max(0.3, Math.min(1, 8 / Math.max(1, activeVoiceCount)));
+    const t = audioCtx.currentTime;
+    masterBus.gain.cancelScheduledValues(t);
+    masterBus.gain.setValueAtTime(masterBus.gain.value, t);
+    masterBus.gain.linearRampToValueAtTime(target, t + 0.08);
+  }
 
   function playChime(scene, freq, strength) {
     if (!soundOn || !audioCtx) return;
-    if (activeVoiceCount >= MAX_ACTIVE_VOICES) return;
     activeVoiceCount++;
-    setTimeout(() => { activeVoiceCount--; }, VOICE_DURATION_MS[scene.voice] || 1000);
+    updateVoiceBusGain();
+    setTimeout(() => {
+      activeVoiceCount = Math.max(0, activeVoiceCount - 1);
+      updateVoiceBusGain();
+    }, VOICE_DURATION_MS[scene.voice] || 1000);
     VOICES[scene.voice](freq, strength);
   }
 
