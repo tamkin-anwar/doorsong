@@ -1230,7 +1230,7 @@
     // and test against the whole swept segment (not just the current
     // point), so a sparse sampling rate doesn't skip strands or under-hit
     // them the way a single fixed-size push would.
-    const moveMag = Math.min(3, Math.max(0.5, Math.abs(dirX) / 8));
+    const moveMag = Math.max(1, Math.min(3, Math.abs(dirX) / 8));
     const segMin = Math.min(prevX, x), segMax = Math.max(prevX, x);
     strands.forEach(s => {
       const dist = s.x < segMin ? segMin - s.x : (s.x > segMax ? s.x - segMax : 0);
