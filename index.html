@@ -222,6 +222,22 @@
   .door-tab:focus-visible { outline: 2px solid var(--accent-a); outline-offset: 2px; }
 
   /* ---------- stage ---------- */
+  .gallery-row { width: 100%; max-width: 1180px; display: flex; align-items: flex-start; justify-content: center; gap: 40px; }
+  .side-note {
+    flex: 0 0 220px;
+    max-width: 220px;
+    margin: 0;
+    font-family: var(--content-font);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.4;
+    color: var(--ink);
+    opacity: 0.82;
+    transition: color 0.6s ease;
+  }
+  @media (max-width: 1099px) {
+    .side-note { display: none; }
+  }
   .stage-wrap { width: min(880px, 100%); min-height: 640px; display: flex; justify-content: center; margin-top: 18px; position: relative; }
 
   .enter-overlay {
@@ -454,6 +470,8 @@
     <button class="nav-arrow" id="nextBtn" aria-label="Next door">›</button>
   </div>
 
+  <div class="gallery-row">
+  <p class="side-note" id="sideNote" aria-hidden="true"></p>
   <div class="stage-wrap">
     <div class="enter-overlay" id="enterOverlay">
       <div class="enter-card">
@@ -476,6 +494,7 @@
       <div class="strands" id="strands" role="img" aria-label="Interactive hanging wind chime strands — touch or hover to play"></div>
       <div class="fade-bottom"></div>
     </div>
+  </div>
   </div>
 
   <div class="controls">
@@ -517,6 +536,7 @@
       font: '"Noto Serif SC", "Iowan Old Style", serif',
       title: 'One time, one meeting',
       subtitle: 'A temple bell, cast in bronze, ringing with the sound the wind leaves behind at a red doorway.',
+      meaning: 'China — bronze bells, red beams, and eaves that curl toward the sky.',
       voiceName: 'Bronze temple bell',
       paper: '#ffedca', ink: '#2a2420', inkSoft: '#5a5044',
       accentA: '#7c2a1e', accentB: '#c79a3e',
@@ -532,6 +552,7 @@
       font: '"Noto Serif JP", "Noto Serif SC", "Iowan Old Style", serif',
       title: '風鈴 — Furin',
       subtitle: 'A glass bell beneath a shrine gate, ringing thin and bright with every passing breeze.',
+      meaning: 'Japan — quiet shrines, red torii gates, and a chime that answers every breeze.',
       voiceName: 'Glass furin',
       paper: '#fffadd', ink: '#231f1c', inkSoft: '#5c554c',
       accentA: '#b23b2e', accentB: '#211d1a',
@@ -546,6 +567,7 @@
       font: '"Noto Serif Bengali", "Iowan Old Style", serif',
       title: 'বাতাসের সুর — Tune of the Wind',
       subtitle: 'An ektara\u2019s single string, plucked low beneath a terracotta arch.',
+      meaning: 'Bengal \u2014 terracotta temples, river deltas, and a single string that remembers.',
       voiceName: 'Ektara pluck',
       paper: '#ffebc4', ink: '#3a2415', inkSoft: '#6b5138',
       accentA: '#a1512e', accentB: '#d9a441',
@@ -561,6 +583,7 @@
       font: '"Noto Serif", "Iowan Old Style", Georgia, serif',
       title: 'Gió qua mái nhà — Wind Through the Roof',
       subtitle: 'Bamboo chimes under a curling communal-house eave, warm and hollow as they knock.',
+      meaning: 'Việt Nam — communal houses, dragon-tail roofs, and bamboo that knocks like a heartbeat.',
       voiceName: 'Bamboo knock',
       paper: '#ffeecd', ink: '#232420', inkSoft: '#565b52',
       accentA: '#3f6b56', accentB: '#c9a227',
@@ -575,6 +598,7 @@
       font: '"Noto Naskh Arabic", "Iowan Old Style", serif',
       title: 'ريح الأبواب — Wind of the Doors',
       subtitle: 'An oud\u2019s doubled strings, humming beneath a horseshoe arch of cut plaster.',
+      meaning: 'Morocco \u2014 zellige tile, carved plaster, and an oud that hums beneath the arch.',
       voiceName: 'Oud pluck',
       paper: '#ffeac9', ink: '#22303a', inkSoft: '#556069',
       accentA: '#1f5f6b', accentB: '#c9a227',
@@ -589,6 +613,7 @@
       font: '"Noto Serif", "Iowan Old Style", Georgia, serif',
       title: 'El aire entre los papeles — Air Between the Paper',
       subtitle: 'Cut-paper banners over a marimba\u2019s bright mallet, ringing like a fiesta afternoon.',
+      meaning: 'M\u00e9xico \u2014 papel picado, tiled stone, and a marimba bright as a fiesta afternoon.',
       voiceName: 'Marimba mallet',
       paper: '#ffe8c8', ink: '#33232a', inkSoft: '#6b5560',
       accentA: '#d1355b', accentB: '#2f9c95',
@@ -817,6 +842,7 @@
   const titleEl = document.getElementById('title');
   const subtitleEl = document.getElementById('subtitle');
   const voiceTagEl = document.getElementById('voiceTag');
+  const sideNoteEl = document.getElementById('sideNote');
   const roofEl = document.getElementById('roof');
   const strandsContainer = document.getElementById('strands');
   const stageEl = document.getElementById('stage');
@@ -893,6 +919,18 @@
       const clipPx = displayedHeight * (1 - keepRatio);
       imgEl.style.clipPath = `inset(0 0 ${clipPx.toFixed(1)}px 0)`;
       imgEl.style.marginBottom = `-${clipPx.toFixed(1)}px`;
+
+      // Center the side caption on the visible photo itself, not on the
+      // much taller image+strands column beneath it.
+      const galleryRow = imgEl.closest('.gallery-row');
+      if (galleryRow && sideNoteEl) {
+        const rowTop = galleryRow.getBoundingClientRect().top;
+        const imgTop = imgEl.getBoundingClientRect().top;
+        const visibleHeight = displayedHeight - clipPx;
+        const centerY = (imgTop - rowTop) + visibleHeight / 2;
+        const noteHeight = sideNoteEl.getBoundingClientRect().height;
+        sideNoteEl.style.marginTop = Math.max(0, centerY - noteHeight / 2).toFixed(1) + 'px';
+      }
     } catch (e) {}
   }
 
@@ -908,6 +946,7 @@
     titleEl.textContent = scene.title;
     subtitleEl.textContent = scene.subtitle;
     voiceTagEl.textContent = scene.voiceName;
+    sideNoteEl.textContent = scene.meaning;
 
     const roofPhotoEl = document.getElementById('roofPhoto');
     if (scene.roofImage) {
