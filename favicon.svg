@@ -1,15 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" role="img">
 <title>Doorsong</title>
-<desc>A rounded doorway silhouette in warm gold-to-maroon, with a small bell hanging on a thin strand inside the opening.</desc>
-<defs>
-<linearGradient id="door" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0%" stop-color="#c79a3e"/>
-<stop offset="55%" stop-color="#a2502f"/>
-<stop offset="100%" stop-color="#7c2a1e"/>
-</linearGradient>
-</defs>
-<path d="M 175 560 L 175 322 A 165 165 0 0 1 505 322 L 505 560 Z" fill="url(#door)"/>
-<line x1="340" y1="300" x2="340" y2="400" stroke="#e9e2d3" stroke-width="7" stroke-linecap="round"/>
-<circle cx="340" cy="432" r="34" fill="#e9e2d3"/>
-<circle cx="340" cy="424" r="10" fill="#7c2a1e"/>
+<desc>A bold flat doorway silhouette in maroon with a warm gold opening, legible at small favicon sizes.</desc>
+<path d="M 165 570 L 165 320 A 175 175 0 0 1 515 320 L 515 570 Z" fill="#7c2a1e"/>
+<path d="M 220 560 L 220 320 A 120 120 0 0 1 460 320 L 460 560 Z" fill="#c79a3e"/>
 </svg>
