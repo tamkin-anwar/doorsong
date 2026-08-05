@@ -1,25 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" role="img">
 <title>Doorsong</title>
-<desc>A glowing sphere fading from warm bronze at its highlight to deep red at its rim, with a thin lintel arc suggesting a doorway.</desc>
+<desc>A rounded doorway silhouette in warm gold-to-maroon, with a small bell hanging on a thin strand inside the opening.</desc>
 <defs>
-<radialGradient id="glow" cx="42%" cy="38%" r="65%">
-<stop offset="0%" stop-color="#e2a05a" stop-opacity="0.35"/>
-<stop offset="100%" stop-color="#e2a05a" stop-opacity="0"/>
-</radialGradient>
-<radialGradient id="sphere" cx="40%" cy="35%" r="70%">
-<stop offset="0%" stop-color="#fff3d9"/>
-<stop offset="18%" stop-color="#f0b56c"/>
-<stop offset="42%" stop-color="#c96a3e"/>
-<stop offset="70%" stop-color="#7a2a2a"/>
-<stop offset="100%" stop-color="#170a0c"/>
-</radialGradient>
+<linearGradient id="door" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#c79a3e"/>
+<stop offset="55%" stop-color="#a2502f"/>
+<stop offset="100%" stop-color="#7c2a1e"/>
+</linearGradient>
 </defs>
-<rect x="0" y="0" width="680" height="680" fill="#0a0a0d"/>
-<circle cx="340" cy="340" r="330" fill="url(#glow)"/>
-<circle cx="340" cy="340" r="255" fill="none" stroke="#e2a05a" stroke-opacity="0.10" stroke-width="1"/>
-<circle cx="340" cy="340" r="290" fill="none" stroke="#e2a05a" stroke-opacity="0.06" stroke-width="1"/>
-<circle cx="340" cy="340" r="215" fill="url(#sphere)"/>
-<path d="M 195 258 Q 340 210 485 258" fill="none" stroke="#0a0a0d" stroke-opacity="0.55" stroke-width="10" stroke-linecap="round"/>
-<line x1="222" y1="272" x2="222" y2="300" stroke="#0a0a0d" stroke-opacity="0.4" stroke-width="8" stroke-linecap="round"/>
-<line x1="458" y1="272" x2="458" y2="300" stroke="#0a0a0d" stroke-opacity="0.4" stroke-width="8" stroke-linecap="round"/>
+<path d="M 175 560 L 175 322 A 165 165 0 0 1 505 322 L 505 560 Z" fill="url(#door)"/>
+<line x1="340" y1="300" x2="340" y2="400" stroke="#e9e2d3" stroke-width="7" stroke-linecap="round"/>
+<circle cx="340" cy="432" r="34" fill="#e9e2d3"/>
+<circle cx="340" cy="424" r="10" fill="#7c2a1e"/>
 </svg>
