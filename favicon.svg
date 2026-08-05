@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" role="img">
 <title>Doorsong</title>
-<desc>A bold flat doorway silhouette in maroon with a warm gold opening, legible at small favicon sizes.</desc>
-<path d="M 165 570 L 165 320 A 175 175 0 0 1 515 320 L 515 570 Z" fill="#7c2a1e"/>
-<path d="M 220 560 L 220 320 A 120 120 0 0 1 460 320 L 460 560 Z" fill="#c79a3e"/>
+<desc>A bold, edge-to-edge doorway arch in maroon with a warm gold opening, filling the icon frame.</desc>
+<path d="M 40 650 L 40 340 A 300 300 0 0 1 640 340 L 640 650 Z" fill="#7c2a1e"/>
+<path d="M 130 630 L 130 340 A 210 210 0 0 1 550 340 L 550 630 Z" fill="#c79a3e"/>
 </svg>
