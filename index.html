@@ -967,8 +967,16 @@
       roofPhotoEl.style.display = 'block';
       roofPhotoEl.style.marginBottom = '0px';
       roofPhotoEl.style.clipPath = 'none';
-      roofPhotoEl.src = scene.roofImage;
+      // Attach onload BEFORE setting src. A data: URI can decode and fire
+      // 'load' immediately/synchronously, so assigning the handler after
+      // src is a real race: it can miss the event entirely, silently
+      // skipping closePhotoGap (leaving the photo/strand gap open and the
+      // side caption's alignment uncomputed). Complete-image case handled
+      // below since a cached/instant decode may leave onload never firing
+      // at all once the handler is attached too late for it to catch up.
       roofPhotoEl.onload = () => closePhotoGap(roofPhotoEl);
+      roofPhotoEl.src = scene.roofImage;
+      if (roofPhotoEl.complete && roofPhotoEl.naturalWidth) closePhotoGap(roofPhotoEl);
     } else {
       roofEl.style.display = '';
       roofPhotoEl.style.display = 'none';
