@@ -891,6 +891,7 @@
 
   function goTo(i) {
     if (i === sceneIndex) return;
+    lastInteraction = performance.now();
     stageEl.classList.add('transitioning');
     setTimeout(() => {
       sceneIndex = i;
@@ -1282,6 +1283,7 @@
   const HIT_RADIUS = isTouch ? 60 : 46;
   const THROTTLE_MS = 90;
   let lastMouseX = -9999;
+  let lastInteraction = performance.now();
   let containerRect = null;
   function updateContainerRect() { containerRect = strandsContainer.getBoundingClientRect(); }
 
@@ -1292,6 +1294,7 @@
 
   function handleMove(clientX, clientY) {
     ensureAudio();
+    lastInteraction = performance.now();
     const { x, y, rect } = pointerToLocal(clientX, clientY);
     const prevX = lastMouseX === -9999 ? x : lastMouseX;
     const dirX = x - prevX;
@@ -1348,6 +1351,33 @@
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
+
+  // Ambient idle sound — after a stretch of no interaction, occasionally
+  // nudge one random strand softly on its own, so a door left open still
+  // feels alive, the way real hanging chimes catch a stray breeze. Reuses
+  // the same per-voice ducking bus and throttle bookkeeping as a real
+  // touch, so it can never fight with or overwhelm actual interaction.
+  const IDLE_MS = 7000;
+  function scheduleAmbient() {
+    const delay = 4000 + Math.random() * 5000;
+    setTimeout(() => {
+      const idleFor = performance.now() - lastInteraction;
+      // Even once idle, only follow through on ~55% of eligible checks —
+      // a real breeze is irregular, not a metronome.
+      if (soundOn && audioCtx && !document.hidden && strands.length && idleFor > IDLE_MS && Math.random() < 0.55) {
+        const s = strands[Math.floor(Math.random() * strands.length)];
+        const scene = SCENES[sceneIndex];
+        const rect = containerRect || strandsContainer.getBoundingClientRect();
+        const idx = Math.abs(Math.round((s.x / (rect.width || 1)) * (scene.scale.length - 1)));
+        const strength = 0.15 + Math.random() * 0.2;
+        s.lastPlay = performance.now();
+        playChime(scene, scene.scale[idx % scene.scale.length], strength);
+        if (!prefersReduced) s.vel += (Math.random() < 0.5 ? -1 : 1) * (2 + Math.random() * 2);
+      }
+      scheduleAmbient();
+    }, delay);
+  }
+  scheduleAmbient();
 
   renderScene(SCENES[sceneIndex]);
 })();
