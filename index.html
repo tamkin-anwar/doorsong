@@ -1125,12 +1125,27 @@
   // not just a louder fundamental. Modeled here as five independent
   // envelopes rather than one shared one so that temporal shape carries
   // through, not just the pitch ratios.
+  //
+  // Chinese temple bells are also struck differently than a Western church
+  // bell: a swung wooden beam, not a metal clapper, so the attack is a
+  // soft wooden thud rather than a sharp metallic clang. A brief, heavily
+  // lowpassed noise burst at the very onset stands in for that.
   function voiceBell(freq, strength) {
     const now = audioCtx.currentTime;
     const vol = Math.min(0.22, 0.08 + strength * 0.18);
     const bus = audioCtx.createGain();
     bus.gain.value = 1;
     bus.connect(masterBus);
+
+    const thud = audioCtx.createBufferSource();
+    thud.buffer = noiseBuffer;
+    const thudFilter = audioCtx.createBiquadFilter();
+    thudFilter.type = 'lowpass'; thudFilter.frequency.value = freq * 0.9; thudFilter.Q.value = 0.5;
+    const thudGain = audioCtx.createGain();
+    thudGain.gain.setValueAtTime(vol * 0.35, now);
+    thudGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+    thud.connect(thudFilter); thudFilter.connect(thudGain); thudGain.connect(bus);
+    thud.start(now); thud.stop(now + 0.08);
 
     // [ratio to prime, relative peak amplitude, attack, decay]
     const partials = [
@@ -1233,10 +1248,26 @@
   }
 
   // oud: two close, slightly detuned strings for its doubled courses,
-  // with a warmer, lower-cutoff pluck than the ektara
+  // with a warmer, lower-cutoff pluck than the ektara. Real ouds also get
+  // a lot of their characteristic warmth from the body itself: the
+  // soundhole rose acts as a Helmholtz cavity resonator, radiating most
+  // strongly around 150-220Hz regardless of which note is actually
+  // played, since that's a property of the body's size and shape, not the
+  // string. A wooden lute body doesn't project sound like a string on its
+  // own, so this "boxy" low thump on every pluck is what a string-only
+  // model was missing.
   function voiceOud(freq, strength) {
     const now = audioCtx.currentTime;
     const vol = Math.min(0.26, 0.11 + strength * 0.18);
+
+    const body = audioCtx.createOscillator();
+    body.type = 'sine'; body.frequency.value = 185;
+    const bodyGain = audioCtx.createGain();
+    bodyGain.gain.setValueAtTime(0.0001, now);
+    bodyGain.gain.exponentialRampToValueAtTime(vol * 0.3, now + 0.01);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+    body.connect(bodyGain); bodyGain.connect(masterBus);
+    body.start(now); body.stop(now + 0.35);
 
     const src = audioCtx.createBufferSource();
     src.buffer = noiseBuffer;
@@ -1268,7 +1299,13 @@
   // reinforces odd harmonics of its own resonance (1x, 3x, 5x...) rather
   // than the full harmonic series, so a quiet 3x partial on the sub tone
   // is added for a touch of that closed-tube color, fading well before
-  // the fundamental since the higher harmonic damps out fastest.
+  // the fundamental since the higher harmonic damps out fastest. The
+  // closest real instrument to what this represents is the t'rung, a
+  // tuned bamboo-tube xylophone traditionally played around the communal
+  // house, and it's specifically prized for clear, "pure tones" rather
+  // than a noisy attack, so the noise transient here is kept quieter and
+  // shorter than a generic percussive knock would use, letting the tuned
+  // tube tone lead.
   function voiceBamboo(freq, strength) {
     const now = audioCtx.currentTime;
     const gain = audioCtx.createGain();
@@ -1292,8 +1329,8 @@
     const bp = audioCtx.createBiquadFilter();
     bp.type = 'bandpass'; bp.frequency.value = freq * 1.4; bp.Q.value = 3;
     const ng = audioCtx.createGain();
-    ng.gain.setValueAtTime(vol * 0.5, now);
-    ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+    ng.gain.setValueAtTime(vol * 0.28, now);
+    ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
     src.connect(bp); bp.connect(ng); ng.connect(masterBus);
 
     gain.connect(masterBus);
