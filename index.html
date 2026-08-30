@@ -474,7 +474,7 @@
   <div class="eyebrow" id="eyebrow">中国 · China</div>
   <h1 id="title" aria-live="polite">One time, one meeting</h1>
   <p class="sub" id="subtitle" aria-live="polite">Sweep your cursor through the doorway. Each strand answers with its own note.</p>
-  <div class="voice-tag" id="voiceTag">Voice — Bronze Temple Bell</div>
+  <div class="voice-tag" id="voiceTag">Bronze Temple Bell</div>
 
   <div class="switcher">
     <button class="nav-arrow" id="prevBtn" aria-label="Previous door">‹</button>
@@ -493,7 +493,7 @@
           </svg>
         </div>
         <div class="line1" id="enterLine1">Click to begin</div>
-        <div class="line2" id="enterLine2">this unlocks sound — after that, just hover</div>
+        <div class="line2" id="enterLine2">this unlocks sound, then just hover</div>
       </div>
     </div>
     <div class="stage" id="stage">
@@ -503,7 +503,7 @@
       </div>
       <svg class="roof" id="roof" viewBox="0 0 640 170" preserveAspectRatio="xMidYMax meet" aria-hidden="true"></svg>
       <img class="roof roof-photo" id="roofPhoto" alt="" aria-hidden="true" style="display:none;">
-      <div class="strands" id="strands" role="img" aria-label="Interactive hanging wind chime strands — touch or hover to play"></div>
+      <div class="strands" id="strands" role="img" aria-label="Interactive hanging wind chime strands, touch or hover to play"></div>
       <div class="fade-bottom"></div>
     </div>
   </div>
@@ -541,7 +541,7 @@
     if (focusAttempts > 10) clearInterval(focusTimer);
   }, 300);
 
-  // Scene definitions — one per door
+  // Scene definitions, one per door
   const SCENES = [
     {
       id: 'china', label: '中国 · China',
@@ -637,7 +637,7 @@
     }
   ];
 
-  // Roof SVG templates — each takes the scene object and returns markup
+  // Roof SVG templates. Each takes the scene object and returns markup.
   // Lighten/darken a hex color by a percentage (-100..100)
   function shade(hex, percent) {
     const f = parseInt(hex.slice(1), 16), t = percent < 0 ? 0 : 255, p = Math.abs(percent) / 100;
@@ -937,47 +937,29 @@
       // much taller image+strands column beneath it.
       const galleryRow = imgEl.closest('.gallery-row');
       if (galleryRow && sideNoteEl) {
-        // contentBottom (above) is deliberately generous — it has to include
+        // contentBottom (above) is deliberately generous. It has to include
         // the photo's soft drop shadow so the fade-to-background mask doesn't
         // get cut off abruptly. But a shadow always trails below the subject,
         // never above it, so using that full generous span's midpoint as the
         // centering target drags the caption down well below where the roof
-        // actually reads as "there" visually. An earlier version tried
-        // weighting rows by raw contrast instead, but that's not reliable
-        // either — a handful of very dark detail rows deep in the structure
-        // (carved woodwork, tile shadow lines) can outweigh the shadow being
-        // individually faint, and the shadow's sheer vertical extent (many
-        // moderately-faint rows) adds up too. A binary threshold — is this
-        // row clearly part of the object, yes or no — is more robust: find
-        // the row-range whose peak contrast clears a fraction of this
-        // image's own strongest contrast, and center on that range instead.
-        let maxDiff = 0;
-        const rowMaxes = [];
-        for (let y = 0; y <= contentBottom; y += 4) {
-          const row = ctx.getImageData(0, y, canvas.width, 1).data;
-          let rowMax = 0;
-          for (let x = 0; x < canvas.width; x += 8) {
-            const px = [row[x * 4], row[x * 4 + 1], row[x * 4 + 2]];
-            const d = Math.abs(px[0] - bg[0]) + Math.abs(px[1] - bg[1]) + Math.abs(px[2] - bg[2]);
-            if (d > rowMax) rowMax = d;
-          }
-          rowMaxes.push([y, rowMax]);
-          if (rowMax > maxDiff) maxDiff = rowMax;
-        }
-        const structureThreshold = maxDiff * 0.5;
-        let structureTop = null, structureBottom = contentBottom;
-        rowMaxes.forEach(([y, rowMax]) => {
-          if (rowMax > structureThreshold) {
-            if (structureTop === null) structureTop = y;
-            structureBottom = y;
-          }
-        });
-        const visualCenterNatural = structureTop === null ? contentBottom / 2 : (structureTop + structureBottom) / 2;
-        const scale = displayedHeight / canvas.height;
+        // actually reads as "there" visually.
+        //
+        // Two pixel-analysis approaches were tried here (weighting rows by
+        // contrast, then a binary structure-vs-shadow threshold) and both
+        // technically worked as designed, but neither matched what actually
+        // looks right by eye once compared side by side against real
+        // candidates. "Looks centered on the subject" is a design judgment,
+        // not something worth re-deriving from pixel statistics per photo.
+        // All six images share the same top-anchored composition (peak/apex
+        // near the top, per the crop pipeline), so a single fixed proportion
+        // of the image height, picked by eye, generalizes fine and is one
+        // number to retune if it's ever off, instead of a threshold to
+        // re-litigate.
+        const FOCAL_POINT_FRACTION = 0.25;
 
         const rowTop = galleryRow.getBoundingClientRect().top;
         const imgTop = imgEl.getBoundingClientRect().top;
-        const centerY = (imgTop - rowTop) + visualCenterNatural * scale;
+        const centerY = (imgTop - rowTop) + displayedHeight * FOCAL_POINT_FRACTION;
         const noteHeight = sideNoteEl.getBoundingClientRect().height;
         sideNoteEl.style.marginTop = Math.max(0, centerY - noteHeight / 2).toFixed(1) + 'px';
       }
@@ -1078,7 +1060,7 @@
   window.addEventListener('orientationchange', scheduleRebuild);
   window.addEventListener('scroll', updateContainerRect, { passive: true });
 
-  // Audio — six instrument voices
+  // Audio: six instrument voices
   function ensureAudio() {
     if (!audioCtx) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1109,7 +1091,7 @@
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
 
-  // bronze temple bell — fundamental + detuned partial + a quiet inharmonic "hum"
+  // bronze temple bell: fundamental + detuned partial + a quiet inharmonic "hum"
   function voiceBell(freq, strength) {
     const now = audioCtx.currentTime;
     const gain = audioCtx.createGain();
@@ -1130,7 +1112,7 @@
     o1.stop(now + 2.3); o2.stop(now + 2.3); o3.stop(now + 2.3);
   }
 
-  // glass furin — higher overtone ratio, fast shimmer decay, slight vibrato
+  // glass furin: higher overtone ratio, fast shimmer decay, slight vibrato
   function voiceGlass(freq, strength) {
     const now = audioCtx.currentTime;
     const gain = audioCtx.createGain();
@@ -1151,7 +1133,7 @@
     o1.stop(now + 1.3); o2.stop(now + 1.3); lfo.stop(now + 1.3);
   }
 
-  // ektara — a short filtered-noise pluck transient plus a single triangle
+  // ektara: a short filtered-noise pluck transient plus a single triangle
   // string with a quick pitch "settle" and a short natural decay
   function voiceEktara(freq, strength) {
     const now = audioCtx.currentTime;
@@ -1179,7 +1161,7 @@
     o.start(now); o.stop(now + 0.85);
   }
 
-  // oud — two close, slightly detuned strings for its doubled courses,
+  // oud: two close, slightly detuned strings for its doubled courses,
   // with a warmer, lower-cutoff pluck than the ektara
   function voiceOud(freq, strength) {
     const now = audioCtx.currentTime;
@@ -1210,7 +1192,7 @@
     });
   }
 
-  // hollow bamboo knock — sub sine "thock" + short filtered noise transient
+  // hollow bamboo knock: sub sine "thock" + short filtered noise transient
   function voiceBamboo(freq, strength) {
     const now = audioCtx.currentTime;
     const gain = audioCtx.createGain();
@@ -1236,7 +1218,7 @@
     src.start(now); src.stop(now + 0.2);
   }
 
-  // marimba mallet — fundamental + strong ~4th partial (characteristic of
+  // marimba mallet: fundamental + strong ~4th partial (characteristic of
   // marimba's tuned resonator tubes) with a quick woody attack
   function voiceMarimba(freq, strength) {
     const now = audioCtx.currentTime;
@@ -1307,7 +1289,7 @@
   const hintText = document.getElementById('hintText');
   if (isTouch) {
     enterLine1.textContent = 'Tap to begin';
-    enterLine2.textContent = 'this unlocks sound — then just touch and drag';
+    enterLine2.textContent = 'this unlocks sound, then just touch and drag';
     hintText.textContent = 'tap once to enable audio · use ‹ › to change doors';
   }
 
@@ -1397,7 +1379,7 @@
   }
   requestAnimationFrame(tick);
 
-  // Ambient idle sound — after a stretch of no interaction, occasionally
+  // Ambient idle sound. After a stretch of no interaction, occasionally
   // nudge one random strand softly on its own, so a door left open still
   // feels alive, the way real hanging chimes catch a stray breeze. Reuses
   // the same per-voice ducking bus and throttle bookkeeping as a real
@@ -1407,8 +1389,8 @@
     const delay = 4000 + Math.random() * 5000;
     setTimeout(() => {
       const idleFor = performance.now() - lastInteraction;
-      // Even once idle, only follow through on ~55% of eligible checks —
-      // a real breeze is irregular, not a metronome.
+      // Even once idle, only follow through on ~55% of eligible checks.
+      // A real breeze is irregular, not a metronome.
       if (soundOn && audioCtx && !document.hidden && strands.length && idleFor > IDLE_MS && Math.random() < 0.55) {
         const s = strands[Math.floor(Math.random() * strands.length)];
         const scene = SCENES[sceneIndex];
