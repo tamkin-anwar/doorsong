@@ -1115,28 +1115,54 @@
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
 
-  // bronze temple bell: fundamental + detuned partial + a quiet inharmonic "hum"
+  // bronze temple bell: real struck bells carry five named partials (hum,
+  // prime, tierce, quint, nominal) at documented ratios to the prime, the
+  // note actually perceived as the bell's pitch: hum 0.5x, prime 1x,
+  // tierce 1.2x (a minor third, the source of a bell's plaintive color),
+  // quint 1.5x, nominal 2x. The bright partials (quint, nominal) hit hard
+  // and fade fast; the low ones (hum, prime, tierce) are quieter but ring
+  // on long after, which is what actually gives a struck bell its sustain,
+  // not just a louder fundamental. Modeled here as five independent
+  // envelopes rather than one shared one so that temporal shape carries
+  // through, not just the pitch ratios.
   function voiceBell(freq, strength) {
     const now = audioCtx.currentTime;
-    const gain = audioCtx.createGain();
     const vol = Math.min(0.22, 0.08 + strength * 0.18);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(vol, now + 0.008);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.7 + strength * 0.4);
+    const bus = audioCtx.createGain();
+    bus.gain.value = 1;
+    bus.connect(masterBus);
 
-    const o1 = audioCtx.createOscillator(); o1.type = 'sine'; o1.frequency.value = freq;
-    const o2 = audioCtx.createOscillator(); o2.type = 'sine'; o2.frequency.value = freq * 2.01;
-    const g2 = audioCtx.createGain(); g2.gain.value = 0.28;
-    const o3 = audioCtx.createOscillator(); o3.type = 'sine'; o3.frequency.value = freq * 2.76;
-    const g3 = audioCtx.createGain(); g3.gain.value = 0.10;
-
-    o1.connect(gain); o2.connect(g2); g2.connect(gain); o3.connect(g3); g3.connect(gain);
-    gain.connect(masterBus);
-    o1.start(now); o2.start(now); o3.start(now);
-    o1.stop(now + 2.3); o2.stop(now + 2.3); o3.stop(now + 2.3);
+    // [ratio to prime, relative peak amplitude, attack, decay]
+    const partials = [
+      [0.5, 0.32, 0.02, 3.0],     // hum, slow to fade
+      [1.0, 1.0, 0.008, 2.2],     // prime, the perceived pitch
+      [1.2, 0.20, 0.008, 1.9],    // tierce
+      [1.5, 0.24, 0.006, 1.0],    // quint
+      [2.01, 0.27, 0.005, 0.85],  // nominal, slightly detuned for chorus
+    ];
+    partials.forEach(([ratio, amp, attack, decay]) => {
+      const o = audioCtx.createOscillator();
+      o.type = 'sine';
+      o.frequency.value = freq * ratio;
+      const g = audioCtx.createGain();
+      const dur = decay + strength * 0.3;
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(vol * amp, now + attack);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      o.connect(g); g.connect(bus);
+      o.start(now);
+      o.stop(now + dur + 0.05);
+    });
   }
 
-  // glass furin: higher overtone ratio, fast shimmer decay, slight vibrato
+  // glass furin: a perfectly smooth-edged glass bell rings too pure and
+  // sounds thin, which is why real furin are cast with a deliberately
+  // rough rim, and the tiny irregularity splits the fundamental into
+  // multiple close, slightly-mistuned partials that beat against each
+  // other, the actual source of a furin's "warm, complex" shimmer. Modeled
+  // here as two closely detuned fundamentals instead of a single vibrato
+  // oscillator, since real beating is an interference pattern between
+  // close pitches, not one pitch wavering.
   function voiceGlass(freq, strength) {
     const now = audioCtx.currentTime;
     const gain = audioCtx.createGain();
@@ -1145,16 +1171,17 @@
     gain.gain.exponentialRampToValueAtTime(vol, now + 0.004);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9 + strength * 0.25);
 
-    const o1 = audioCtx.createOscillator(); o1.type = 'sine'; o1.frequency.value = freq;
+    const o1a = audioCtx.createOscillator(); o1a.type = 'sine'; o1a.frequency.value = freq * 0.996;
+    const g1a = audioCtx.createGain(); g1a.gain.value = 0.55;
+    const o1b = audioCtx.createOscillator(); o1b.type = 'sine'; o1b.frequency.value = freq * 1.004;
+    const g1b = audioCtx.createGain(); g1b.gain.value = 0.55;
     const o2 = audioCtx.createOscillator(); o2.type = 'sine'; o2.frequency.value = freq * 3.01;
     const g2 = audioCtx.createGain(); g2.gain.value = 0.16;
-    const lfo = audioCtx.createOscillator(); lfo.frequency.value = 6;
-    const lfoGain = audioCtx.createGain(); lfoGain.gain.value = 3;
-    lfo.connect(lfoGain); lfoGain.connect(o1.frequency);
 
-    o1.connect(gain); o2.connect(g2); g2.connect(gain); gain.connect(masterBus);
-    o1.start(now); o2.start(now); lfo.start(now);
-    o1.stop(now + 1.3); o2.stop(now + 1.3); lfo.stop(now + 1.3);
+    o1a.connect(g1a); g1a.connect(gain); o1b.connect(g1b); g1b.connect(gain);
+    o2.connect(g2); g2.connect(gain); gain.connect(masterBus);
+    o1a.start(now); o1b.start(now); o2.start(now);
+    o1a.stop(now + 1.3); o1b.stop(now + 1.3); o2.stop(now + 1.3);
   }
 
   // ektara: a short filtered-noise pluck transient plus a single triangle
@@ -1216,7 +1243,12 @@
     });
   }
 
-  // hollow bamboo knock: sub sine "thock" + short filtered noise transient
+  // hollow bamboo knock: sub sine "thock" + short filtered noise transient.
+  // A bamboo tube is closed at one end (like a stopped pipe), which
+  // reinforces odd harmonics of its own resonance (1x, 3x, 5x...) rather
+  // than the full harmonic series, so a quiet 3x partial on the sub tone
+  // is added for a touch of that closed-tube color, fading well before
+  // the fundamental since the higher harmonic damps out fastest.
   function voiceBamboo(freq, strength) {
     const now = audioCtx.currentTime;
     const gain = audioCtx.createGain();
@@ -1227,6 +1259,13 @@
 
     const o = audioCtx.createOscillator(); o.type = 'sine'; o.frequency.value = freq * 0.75;
     o.connect(gain);
+
+    const o2 = audioCtx.createOscillator(); o2.type = 'sine'; o2.frequency.value = freq * 0.75 * 3;
+    const g2 = audioCtx.createGain();
+    g2.gain.setValueAtTime(0.0001, now);
+    g2.gain.exponentialRampToValueAtTime(vol * 0.12, now + 0.006);
+    g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+    o2.connect(g2); g2.connect(masterBus);
 
     const src = audioCtx.createBufferSource();
     src.buffer = noiseBuffer;
@@ -1239,11 +1278,15 @@
 
     gain.connect(masterBus);
     o.start(now); o.stop(now + 0.7);
+    o2.start(now); o2.stop(now + 0.2);
     src.start(now); src.stop(now + 0.2);
   }
 
-  // marimba mallet: fundamental + strong ~4th partial (characteristic of
-  // marimba's tuned resonator tubes) with a quick woody attack
+  // marimba mallet: a tuned marimba bar and its resonator tube are built to
+  // reinforce two specific overtones, 4x the fundamental and 10x it, which
+  // is what gives a real marimba its warm "woody" character instead of a
+  // xylophone's harsher, untuned ring. The 10x partial is quiet and fades
+  // almost immediately, just enough mallet-strike sparkle on the attack.
   function voiceMarimba(freq, strength) {
     const now = audioCtx.currentTime;
     const gain = audioCtx.createGain();
@@ -1256,9 +1299,16 @@
     const o2 = audioCtx.createOscillator(); o2.type = 'sine'; o2.frequency.value = freq * 3.98;
     const g2 = audioCtx.createGain(); g2.gain.value = 0.22;
 
+    const o3 = audioCtx.createOscillator(); o3.type = 'sine'; o3.frequency.value = freq * 10;
+    const g3 = audioCtx.createGain();
+    g3.gain.setValueAtTime(0.0001, now);
+    g3.gain.exponentialRampToValueAtTime(vol * 0.1, now + 0.003);
+    g3.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+
     o1.connect(gain); o2.connect(g2); g2.connect(gain); gain.connect(masterBus);
-    o1.start(now); o2.start(now);
-    o1.stop(now + 1.0); o2.stop(now + 1.0);
+    o3.connect(g3); g3.connect(masterBus);
+    o1.start(now); o2.start(now); o3.start(now);
+    o1.stop(now + 1.0); o2.stop(now + 1.0); o3.stop(now + 0.15);
   }
 
   const VOICES = {
@@ -1268,7 +1318,7 @@
   // Matches each voice's own oscillator .stop() time above, so the bus
   // gain recovers right as a note actually finishes ringing.
   const VOICE_DURATION_MS = {
-    bell: 2300, glass: 1300, ektara: 850, oud: 1000, bamboo: 700, marimba: 1000
+    bell: 3350, glass: 1300, ektara: 850, oud: 1000, bamboo: 700, marimba: 1000
   };
   let activeVoiceCount = 0;
 
