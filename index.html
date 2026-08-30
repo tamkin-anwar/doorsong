@@ -234,7 +234,7 @@
   .door-tab:focus-visible { outline: 2px solid var(--accent-a); outline-offset: 2px; }
 
   /* ---------- stage ---------- */
-  .gallery-row { width: 100%; max-width: 1180px; display: flex; align-items: flex-start; justify-content: center; gap: 40px; }
+  .gallery-row { width: 100%; max-width: 1500px; display: flex; align-items: flex-start; justify-content: center; gap: 40px; }
   .side-note {
     flex: 0 0 220px;
     max-width: 220px;
@@ -247,8 +247,19 @@
     opacity: 0.82;
     transition: color 0.6s ease;
   }
+  .side-note-right {
+    flex: 0 0 260px;
+    max-width: 260px;
+    font-size: 16px;
+    line-height: 1.55;
+    text-align: right;
+    opacity: 0.72;
+  }
   @media (max-width: 1099px) {
     .side-note { display: none; }
+  }
+  @media (max-width: 1379px) {
+    .side-note-right { display: none; }
   }
   .stage-wrap { width: min(880px, 100%); min-height: 640px; display: flex; justify-content: center; margin-top: 18px; position: relative; }
 
@@ -507,6 +518,7 @@
       <div class="fade-bottom"></div>
     </div>
   </div>
+  <p class="side-note side-note-right" id="sideNoteRight" aria-hidden="true"></p>
   </div>
 
   <div class="controls">
@@ -549,6 +561,7 @@
       title: 'One time, one meeting',
       subtitle: 'A temple bell, cast in bronze, ringing with the sound the wind leaves behind at a red doorway.',
       meaning: 'China — bronze bells, red beams, and eaves that curl toward the sky.',
+      story: 'Temple bells have rung from towers across China for over a thousand years, struck to mark the hours and, in Buddhist practice, said to carry away a hundred and eight troubles with each toll. Hung at a doorway instead of a tower, the same bronze voice greets whoever crosses the threshold.',
       voiceName: 'Bronze temple bell',
       paper: '#ffedca', ink: '#2a2420', inkSoft: '#5a5044',
       accentA: '#7c2a1e', accentB: '#c79a3e',
@@ -565,6 +578,7 @@
       title: '風鈴 — Furin',
       subtitle: 'A glass bell beneath a shrine gate, ringing thin and bright with every passing breeze.',
       meaning: 'Japan — quiet shrines, red torii gates, and a chime that answers every breeze.',
+      story: 'Furin arrived from China with Buddhist monks over a thousand years ago, first cast in bronze to keep evil spirits from a temple’s reach. By the Edo period they had become a summer custom for ordinary households, their high glass ring said to cool the mind before it cools the air.',
       voiceName: 'Glass furin',
       paper: '#fffadd', ink: '#231f1c', inkSoft: '#5c554c',
       accentA: '#b23b2e', accentB: '#211d1a',
@@ -580,6 +594,7 @@
       title: 'বাতাসের সুর — Tune of the Wind',
       subtitle: 'An ektara\u2019s single string, plucked low beneath a terracotta arch.',
       meaning: 'Bengal \u2014 terracotta temples, river deltas, and a single string that remembers.',
+      story: 'The ektara belongs to the Bauls, wandering mystic singers of Bengal who have carried a single string and a gourd body from village to village since at least the fifteenth century. One finger holds the drone, and a whole life of searching for the divine rides on top of it.',
       voiceName: 'Ektara pluck',
       paper: '#ffebc4', ink: '#3a2415', inkSoft: '#6b5138',
       accentA: '#a1512e', accentB: '#d9a441',
@@ -596,6 +611,7 @@
       title: 'Gió qua mái nhà — Wind Through the Roof',
       subtitle: 'Bamboo chimes under a curling communal-house eave, warm and hollow as they knock.',
       meaning: 'Việt Nam — communal houses, dragon-tail roofs, and bamboo that knocks like a heartbeat.',
+      story: 'A village’s đình is not just a roof, it is where the community gathers and where the guardian spirit of the village is asked to watch over it. Pairs of carved dragons chase the sun and moon along the ridge line, sometimes by the hundreds.',
       voiceName: 'Bamboo knock',
       paper: '#ffeecd', ink: '#232420', inkSoft: '#565b52',
       accentA: '#3f6b56', accentB: '#c9a227',
@@ -611,6 +627,7 @@
       title: 'ريح الأبواب — Wind of the Doors',
       subtitle: 'An oud\u2019s doubled strings, humming beneath a horseshoe arch of cut plaster.',
       meaning: 'Morocco \u2014 zellige tile, carved plaster, and an oud that hums beneath the arch.',
+      story: 'The oud has carried Andalusian music since the classical schools of Moorish Spain scattered into Fes, Rabat, and Tetouan centuries ago. In a nuba suite it does double work, holding the melody and the harmony underneath it at once.',
       voiceName: 'Oud pluck',
       paper: '#ffeac9', ink: '#22303a', inkSoft: '#556069',
       accentA: '#1f5f6b', accentB: '#c9a227',
@@ -626,6 +643,7 @@
       title: 'El aire entre los papeles — Air Between the Paper',
       subtitle: 'Cut-paper banners over a marimba\u2019s bright mallet, ringing like a fiesta afternoon.',
       meaning: 'M\u00e9xico \u2014 papel picado, tiled stone, and a marimba bright as a fiesta afternoon.',
+      story: 'In Chiapas, marimba is called las maderas que cantan, the wood that sings, a name for an instrument descended from the West African balafon that enslaved people carried across the Atlantic and grew into the region\u2019s own voice. Papel picado is cut in a tradition older than the tissue paper itself, its fluttering said to carry a wish between the living and whatever\u2019s listening.',
       voiceName: 'Marimba mallet',
       paper: '#ffe8c8', ink: '#33232a', inkSoft: '#6b5560',
       accentA: '#d1355b', accentB: '#2f9c95',
@@ -855,6 +873,7 @@
   const subtitleEl = document.getElementById('subtitle');
   const voiceTagEl = document.getElementById('voiceTag');
   const sideNoteEl = document.getElementById('sideNote');
+  const sideNoteRightEl = document.getElementById('sideNoteRight');
   const roofEl = document.getElementById('roof');
   const strandsContainer = document.getElementById('strands');
   const stageEl = document.getElementById('stage');
@@ -962,6 +981,10 @@
         const centerY = (imgTop - rowTop) + displayedHeight * FOCAL_POINT_FRACTION;
         const noteHeight = sideNoteEl.getBoundingClientRect().height;
         sideNoteEl.style.marginTop = Math.max(0, centerY - noteHeight / 2).toFixed(1) + 'px';
+        if (sideNoteRightEl) {
+          const noteRightHeight = sideNoteRightEl.getBoundingClientRect().height;
+          sideNoteRightEl.style.marginTop = Math.max(0, centerY - noteRightHeight / 2).toFixed(1) + 'px';
+        }
       }
     } catch (e) {}
   }
@@ -979,6 +1002,7 @@
     subtitleEl.textContent = scene.subtitle;
     voiceTagEl.textContent = scene.voiceName;
     sideNoteEl.textContent = scene.meaning;
+    sideNoteRightEl.textContent = scene.story;
 
     const roofPhotoEl = document.getElementById('roofPhoto');
     if (scene.roofImage) {
