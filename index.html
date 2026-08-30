@@ -1184,11 +1184,20 @@
     o1a.stop(now + 1.3); o1b.stop(now + 1.3); o2.stop(now + 1.3);
   }
 
-  // ektara: a short filtered-noise pluck transient plus a single triangle
-  // string with a quick pitch "settle" and a short natural decay
+  // ektara: a real ektara's string runs over a bridge that sits directly
+  // on a stretched animal-skin membrane (the same basic mechanism a banjo
+  // uses), which is what gives it a bright, buzzing twang rather than a
+  // clean plucked-string tone, closer to a taut drum skin than a guitar. A
+  // plain triangle wave (odd harmonics only, no buzz) reads as a generic
+  // soft pluck instead. Rebuilt with a sawtooth core (full harmonic
+  // series) through a lowpass to tame the harshness, and a small ongoing
+  // pitch wobble standing in for the Baul technique of flexing the bamboo
+  // neck mid-note to bend the string. Still short and non-resonant, same
+  // as before, so rapid triggering doesn't smear.
   function voiceEktara(freq, strength) {
     const now = audioCtx.currentTime;
     const vol = Math.min(0.24, 0.1 + strength * 0.16);
+    const dur = 0.5 + strength * 0.12;
 
     const src = audioCtx.createBufferSource();
     src.buffer = noiseBuffer;
@@ -1201,15 +1210,26 @@
     src.start(now); src.stop(now + 0.08);
 
     const o = audioCtx.createOscillator();
-    o.type = 'triangle';
-    o.frequency.setValueAtTime(freq * 1.015, now);
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(freq * 1.02, now);
     o.frequency.exponentialRampToValueAtTime(freq, now + 0.05);
+
+    const wobble = audioCtx.createOscillator();
+    wobble.frequency.value = 4.5;
+    const wobbleGain = audioCtx.createGain();
+    wobbleGain.gain.value = freq * 0.006;
+    wobble.connect(wobbleGain); wobbleGain.connect(o.frequency);
+
+    const lp = audioCtx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = freq * 5; lp.Q.value = 0.7;
+
     const g = audioCtx.createGain();
     g.gain.setValueAtTime(0.0001, now);
     g.gain.exponentialRampToValueAtTime(vol, now + 0.006);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.5 + strength * 0.12);
-    o.connect(g); g.connect(masterBus);
-    o.start(now); o.stop(now + 0.85);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    o.connect(lp); lp.connect(g); g.connect(masterBus);
+    o.start(now); o.stop(now + dur + 0.05);
+    wobble.start(now); wobble.stop(now + dur + 0.05);
   }
 
   // oud: two close, slightly detuned strings for its doubled courses,
