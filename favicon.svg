@@ -1,8 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" role="img">
 <title>Doorsong</title>
-<desc>Six small doorway arches arranged in a ring around a single gold center, one portal standing in for the six cultures.</desc>
-<rect x="20" y="20" width="640" height="640" rx="96" fill="#e9e2d3"/>
-<g fill="#2a2420">
+<desc>Six doorway arches in a gradient ink brown arranged around a glossy gold center, on a warm gradient ground, with soft depth.</desc>
+<defs>
+<radialGradient id="bg" cx="32%" cy="26%" r="80%">
+<stop offset="0%" stop-color="#f7f0e0"/>
+<stop offset="55%" stop-color="#e9dbbd"/>
+<stop offset="100%" stop-color="#c69a5e"/>
+</radialGradient>
+<linearGradient id="petal" x1="0%" y1="0%" x2="15%" y2="100%">
+<stop offset="0%" stop-color="#4d3c2c"/>
+<stop offset="100%" stop-color="#211a14"/>
+</linearGradient>
+<radialGradient id="center" cx="34%" cy="28%" r="70%">
+<stop offset="0%" stop-color="#fdedb8"/>
+<stop offset="60%" stop-color="#dba847"/>
+<stop offset="100%" stop-color="#a3701f"/>
+</radialGradient>
+<filter id="lift" x="-60%" y="-60%" width="220%" height="220%">
+<feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#1a1108" flood-opacity="0.35"/>
+</filter>
+</defs>
+<rect x="20" y="20" width="640" height="640" rx="150" fill="url(#bg)"/>
+<g filter="url(#lift)">
+<g fill="url(#petal)">
 <g transform="rotate(0 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
 <g transform="rotate(60 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
 <g transform="rotate(120 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
@@ -10,5 +30,7 @@
 <g transform="rotate(240 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
 <g transform="rotate(300 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
 </g>
-<circle cx="340" cy="340" r="34" fill="#c79a3e"/>
+<circle cx="340" cy="340" r="36" fill="url(#center)"/>
+<ellipse cx="329" cy="327" rx="12" ry="8" fill="#fff8e6" opacity="0.55"/>
+</g>
 </svg>
