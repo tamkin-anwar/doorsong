@@ -1,21 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" role="img">
 <title>Doorsong</title>
-<desc>A single flowing gradient stroke, indigo into coral, like a bent note or a swinging strand, on a warm ground.</desc>
+<desc>A single flowing gradient stroke, indigo into coral, filling the frame edge to edge with no background.</desc>
 <defs>
-<radialGradient id="bg2" cx="30%" cy="24%" r="85%">
-<stop offset="0%" stop-color="#f7ecd4"/>
-<stop offset="55%" stop-color="#efd9a8"/>
-<stop offset="100%" stop-color="#c98a4a"/>
-</radialGradient>
 <linearGradient id="stroke" x1="10%" y1="90%" x2="90%" y2="10%">
 <stop offset="0%" stop-color="#372a6e"/>
 <stop offset="55%" stop-color="#9c3f6e"/>
 <stop offset="100%" stop-color="#f2703f"/>
 </linearGradient>
-<filter id="lift2" x="-60%" y="-60%" width="220%" height="220%">
-<feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#1a1030" flood-opacity="0.3"/>
+<filter id="lift" x="-60%" y="-60%" width="220%" height="220%">
+<feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#1a1030" flood-opacity="0.35"/>
 </filter>
 </defs>
-<rect x="20" y="20" width="640" height="640" rx="150" fill="url(#bg2)"/>
-<path d="M 170 470 C 250 470, 250 340, 340 340 C 430 340, 430 210, 510 210" fill="none" stroke="url(#stroke)" stroke-width="56" stroke-linecap="round" filter="url(#lift2)"/>
+<path d="M 51 561 C 187 561, 187 340, 340 340 C 493 340, 493 119, 629 119" fill="none" stroke="url(#stroke)" stroke-width="92" stroke-linecap="round" filter="url(#lift)"/>
 </svg>
