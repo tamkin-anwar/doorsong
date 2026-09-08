@@ -1,15 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" role="img">
 <title>Doorsong</title>
-<desc>A doorway arch in warm ink brown on cream, with three dark chime strands of uneven length hanging inside the opening, each ending in a small gold bead.</desc>
+<desc>Six small doorway arches arranged in a ring around a single gold center, one portal standing in for the six cultures.</desc>
 <rect x="20" y="20" width="640" height="640" rx="96" fill="#e9e2d3"/>
-<path d="M 110 590 L 110 330 A 230 230 0 0 1 570 330 L 570 590 Z" fill="#2a2420"/>
-<path d="M 165 590 L 165 335 A 175 175 0 0 1 515 335 L 515 590 Z" fill="#e9e2d3"/>
-<g stroke="#2a2420" stroke-width="24" stroke-linecap="round" fill="none">
-<path d="M 255 220 L 255 385"/>
-<path d="M 340 200 L 340 465"/>
-<path d="M 425 220 L 425 415"/>
+<g fill="#2a2420">
+<g transform="rotate(0 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
+<g transform="rotate(60 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
+<g transform="rotate(120 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
+<g transform="rotate(180 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
+<g transform="rotate(240 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
+<g transform="rotate(300 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
 </g>
-<circle cx="255" cy="392" r="30" fill="#c79a3e"/>
-<circle cx="340" cy="472" r="30" fill="#c79a3e"/>
-<circle cx="425" cy="422" r="30" fill="#c79a3e"/>
+<circle cx="340" cy="340" r="34" fill="#c79a3e"/>
 </svg>
