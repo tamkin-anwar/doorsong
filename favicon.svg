@@ -1,15 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" role="img">
 <title>Doorsong</title>
-<desc>Six doorway arches in a gradient ink brown arranged around a glossy gold center, on a warm gradient ground, with soft depth.</desc>
+<desc>A single doorway arch and the sound rising through it, rendered as nested arcs in gradient ink and gold on a warm gradient ground, with a glossy struck point at the base.</desc>
 <defs>
 <radialGradient id="bg" cx="32%" cy="26%" r="80%">
 <stop offset="0%" stop-color="#f7f0e0"/>
 <stop offset="55%" stop-color="#e9dbbd"/>
 <stop offset="100%" stop-color="#c69a5e"/>
 </radialGradient>
-<linearGradient id="petal" x1="0%" y1="0%" x2="15%" y2="100%">
+<linearGradient id="arch" x1="0%" y1="0%" x2="10%" y2="100%">
 <stop offset="0%" stop-color="#4d3c2c"/>
 <stop offset="100%" stop-color="#211a14"/>
+</linearGradient>
+<linearGradient id="ripple" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" stop-color="#e9c273"/>
+<stop offset="100%" stop-color="#b3822f"/>
 </linearGradient>
 <radialGradient id="center" cx="34%" cy="28%" r="70%">
 <stop offset="0%" stop-color="#fdedb8"/>
@@ -22,15 +26,10 @@
 </defs>
 <rect x="20" y="20" width="640" height="640" rx="150" fill="url(#bg)"/>
 <g filter="url(#lift)">
-<g fill="url(#petal)">
-<g transform="rotate(0 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
-<g transform="rotate(60 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
-<g transform="rotate(120 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
-<g transform="rotate(180 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
-<g transform="rotate(240 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
-<g transform="rotate(300 340 340)"><path d="M 305 300 L 305 185 A 35 35 0 0 1 375 185 L 375 300 Z"/></g>
-</g>
-<circle cx="340" cy="340" r="36" fill="url(#center)"/>
-<ellipse cx="329" cy="327" rx="12" ry="8" fill="#fff8e6" opacity="0.55"/>
+<path d="M 110 560 A 230 230 0 0 1 570 560" fill="none" stroke="url(#arch)" stroke-width="40" stroke-linecap="round"/>
+<path d="M 190 560 A 150 150 0 0 1 490 560" fill="none" stroke="url(#ripple)" stroke-width="18" stroke-linecap="round" opacity="0.85"/>
+<path d="M 250 560 A 90 90 0 0 1 430 560" fill="none" stroke="url(#ripple)" stroke-width="11" stroke-linecap="round" opacity="0.55"/>
+<circle cx="340" cy="560" r="22" fill="url(#center)"/>
+<ellipse cx="333" cy="553" rx="7" ry="5" fill="#fff8e6" opacity="0.6"/>
 </g>
 </svg>
